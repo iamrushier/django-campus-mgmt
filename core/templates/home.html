@@ -1,14 +1,23 @@
-{% extends "base.html" %} 
-{% block title %}Home{% endblock %} 
+{% extends 'base.html' %}
+{% block title %}
+  Home
+{% endblock %}
 {% block content %}
-{% if user.is_authenticated %} Hi {{ user.username }} , You are logged in as: {{user.role}}! 
-<form action="{% url 'logout' %}" method="POST">
-    {% csrf_token %}
-    <button type="submit">Log Out</button>
-</form>
-{% else %}
-<p>You are not logged in</p>
-<a href="{% url 'login' %}">Log In</a>
-<a href="{% url 'signup' %}">Sign Up</a>
-{% endif %} 
+  {% if user.is_authenticated %}
+    Hi {{ user.username }} , You are logged in as: {{ user.role }}!<div>
+      <form action="{% url 'logout' %}" method="POST">
+        {% csrf_token %}
+        <button type="submit">Log Out</button>
+      </form>
+    </div>
+    <div>
+      <nav>
+        <a href="{% url 'courses:course_list' %}">Go to courses</a>
+      </nav>
+    </div>
+  {% else %}
+    <p>You are not logged in</p>
+    <a href="{% url 'login' %}">Log In</a>
+    <a href="{% url 'signup' %}">Sign Up</a>
+  {% endif %}
 {% endblock %}

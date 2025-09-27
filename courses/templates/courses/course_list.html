@@ -1,0 +1,19 @@
+<!-- templates/courses/course_list.html -->
+<!doctype html>
+<html>
+<head><title>Courses</title></head>
+<body>
+  <h1>All Courses</h1>
+  <nav><a href="/">Home</a> | <a href="{% url 'courses:course_list' %}">Courses</a></nav>
+  <ul>
+    {% for course in courses %}
+      <li>
+        <a href="{% url 'courses:course_detail' course.pk %}">{{ course.code }} — {{ course.name }}</a>
+        {% if course.teacher %} (Teacher: {{ course.teacher.username }}){% endif %}
+      </li>
+    {% empty %}
+      <li>No courses yet.</li>
+    {% endfor %}
+  </ul>
+</body>
+</html>

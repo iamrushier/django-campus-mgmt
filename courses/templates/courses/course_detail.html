@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ course.name }}</title>
+  </head>
+  <body>
+    <nav>
+      <a href="{% url 'courses:course_list' %}">Back to courses</a>
+    </nav>
+    <h1>Course Details</h1>
+    <h3>{{ course.code }} — {{ course.name }}</h3>
+    <p>{{ course.description }}</p>
+    <p>
+      Teacher:{% if course.teacher %}
+        {{ course.teacher.username }}
+      {% else %}
+        Not assigned
+      {% endif %}
+    </p>
+
+    {% if user.is_authenticated and user.role == 'student' %}
+      {% if enrollment %}
+        <p>
+          You are enrolled. <a href="{% url 'courses:results' course.pk %}">View results</a>
+        </p>
+      {% else %}
+        <form action="{% url 'courses:enroll' course.pk %}" method="post">
+          {% csrf_token %}
+          <button type="submit">Enroll</button>
+        </form>
+      {% endif %}
+    {% endif %}
+
+    {% if user.is_authenticated and user.role == 'teacher' or user.role == 'admin' %}
+      <p>
+        <a href="{% url 'courses:enrolled_students' course.pk %}">View enrolled students</a>
+      </p>
+      <p>
+        <a href="{% url 'courses:results' course.pk %}">View results</a>
+      </p>
+    {% endif %}
+  </body>
+</html>

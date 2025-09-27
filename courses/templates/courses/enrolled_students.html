@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Students in {{ course.name }}</title>
+  </head>
+  <body>
+    <nav>
+      <a href="{% url 'courses:course_detail' course.pk %}">Back</a>
+    </nav>
+    <h1>Students enrolled in {{ course.code }} — {{ course.name }}</h1>
+    <ul>
+      {% for en in enrollments %}
+        <li>{{ en.student.username }} (enrolled on {{ en.enrolled_on }}) — Grade: {{ en.grade|default:'N/A' }}</li>
+      {% empty %}
+        <li>No students enrolled yet.</li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>

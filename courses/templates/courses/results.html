@@ -1,0 +1,22 @@
+<!-- templates/courses/results.html -->
+<!doctype html>
+<html>
+<head><title>Results — {{ course.name }}</title></head>
+<body>
+  <nav><a href="{% url 'courses:course_detail' course.pk %}">Back</a></nav>
+  <h1>Results for {{ course.code }} — {{ course.name }}</h1>
+
+  {% if enrollment %}
+    <p>Your grade: {{ enrollment.grade|default:"Not released yet" }}</p>
+  {% elif enrollments %}
+    <table>
+      <tr><th>Student</th><th>Enrolled on</th><th>Grade</th></tr>
+      {% for en in enrollments %}
+        <tr><td>{{ en.student.username }}</td><td>{{ en.enrolled_on }}</td><td>{{ en.grade|default:"-" }}</td></tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>No results to show.</p>
+  {% endif %}
+</body>
+</html>
