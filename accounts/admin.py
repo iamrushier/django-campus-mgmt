@@ -8,7 +8,7 @@ class CMSUserAdmin(UserAdmin):
         ('Additional Info',{'fields':('role',)}),
     )
     add_fieldsets=UserAdmin.add_fieldsets+(
-        ('Additional Info',{'fields':('role',)})
+        ('Additional Info',{'fields':('role',)}),
     )
     list_display = ['username','email','role','is_staff']
     
