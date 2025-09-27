@@ -14,6 +14,6 @@ class CMSUserAdmin(UserAdmin):
             'fields':('username','email','role','password1','password2'),
         }),
     )
-    list_display = ['username','email','role','is_staff']
+    list_display = ['id','username','email','role','is_staff']
     
 admin.site.register(CMSUser,CMSUserAdmin)
