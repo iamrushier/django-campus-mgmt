@@ -8,6 +8,7 @@ class CMSUser(AbstractUser):
         ('teacher','Teacher'),
         ('admin','Admin')
     ]
+    email=models.EmailField(unique=True)
     role=models.CharField(max_length=20,choices=ROLE_CHOICES,default='student')
     
     def __str__(self):
