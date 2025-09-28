@@ -10,3 +10,5 @@ build/
 # IDEs and editors
 .vscode/
 .idea/
+
+uploads/

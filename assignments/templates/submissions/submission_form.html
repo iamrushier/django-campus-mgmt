@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Submit: {{ assignment.title }}</title>
+  </head>
+  <body>
+    <h1>Submit Assignment</h1>
+    <h3>{{ assignment.title }} ({{ assignment.course.code }})</h3>
+
+    <p>
+      <strong>Description:</strong> {{ assignment.description|linebreaks }}
+    </p>
+    <p>
+      <strong>Due Date:</strong> {{ assignment.due_date|default:'No due date' }}
+    </p>
+
+    {% if already_submitted %}
+      <p>You have already submitted this assignment.</p>
+      <p>
+        File: <a href="{{ submission.file.url }}">{{ submission.file.name }}</a><br />
+        Submitted at: {{ submission.submitted_at }}<br />
+        {% if submission.grade %}
+          Grade: {{ submission.grade }}<br />
+          Feedback: {{ submission.feedback|default:'-' }}
+        {% endif %}
+      </p>
+    {% else %}
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit Assignment</button>
+      </form>
+    {% endif %}
+
+    <p>
+      <a href="{% url 'assignments:assignment_detail' assignment.pk %}">Back to Assignment Details</a>
+    </p>
+  </body>
+</html>
