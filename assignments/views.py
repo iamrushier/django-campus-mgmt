@@ -88,3 +88,21 @@ def assignment_edit(request, pk):
         "assignments/assignment_form.html",
         {"form": form, "assignment": assignment, "is_edit": True},
     )
+    
+    
+@login_required
+@role_required(["teacher", "admin"])
+def assignment_delete(request, pk):
+    assignment = get_object_or_404(Assignment, pk=pk)
+    if request.user.role == "teacher" and assignment.course.teacher != request.user:
+        return HttpResponseForbidden("You cannot delete this assignment.")
+    if request.method == "POST":
+        course_pk = assignment.course.pk
+        assignment.delete()
+        messages.success(request, "Assignment deleted successfully.")
+        return redirect("assignments:course_assignments", course_pk=course_pk)
+    return render(
+        request,
+        "assignments/assignment_confirm_delete.html",
+        {"assignment": assignment},
+    )
