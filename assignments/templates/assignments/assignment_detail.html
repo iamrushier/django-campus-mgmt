@@ -22,12 +22,11 @@
     </p>
 
     {% if user.is_authenticated and user.role == 'admin' or user == assignment.course.teacher %}
-      Edit | Delete
-      <!-- Enable later -->
-      {% comment %} <p>
-        <a href="{% url 'assignments:assignment_edit' assignment.pk %}">Edit</a> |
+      <p>
+        <a href="{% url 'assignments:assignment_edit' assignment.pk %}">Edit</a> |{% comment %}
         <a href="{% url 'assignments:assignment_delete' assignment.pk %}">Delete</a>
-      </p> {% endcomment %}
+        {% endcomment %}
+      </p>
     {% endif %}
 
     <p>

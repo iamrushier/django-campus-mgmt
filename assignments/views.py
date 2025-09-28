@@ -63,3 +63,28 @@ def assignment_detail(request, pk):
         "assignments/assignment_detail.html",
         {"assignment": assignment},
     )
+    
+@login_required
+@role_required(["teacher", "admin"])
+def assignment_edit(request, pk):
+    assignment = get_object_or_404(Assignment, pk=pk)
+    
+    if request.user.role == "teacher" and assignment.course.teacher != request.user:
+        return HttpResponseForbidden("You cannot edit this assignment.")
+    
+    if request.method == "POST":
+        form = AssignmentForm(request.POST, instance=assignment)
+        if form.is_valid():
+            updated = form.save(commit=False)
+            updated.course = assignment.course  # prevent course change
+            updated.teacher = assignment.teacher  # preserve original teacher
+            updated.save()
+            messages.success(request, "Assignment updated successfully.")
+            return redirect("assignments:assignment_detail", pk=assignment.pk)
+    else:
+        form = AssignmentForm(instance=assignment)
+    return render(
+        request,
+        "assignments/assignment_form.html",
+        {"form": form, "assignment": assignment, "is_edit": True},
+    )
