@@ -36,7 +36,7 @@ class Submission(models.Model):
         limit_choices_to={"role": "student"},
         related_name="submissions"
     )
-    file = models.FileField(upload_to="uploads/")
+    file = models.FileField(upload_to="")
     submitted_at = models.DateTimeField(auto_now_add=True)
     grade = models.CharField(max_length=10, blank=True, null=True)
     feedback = models.TextField(blank=True, null=True)
