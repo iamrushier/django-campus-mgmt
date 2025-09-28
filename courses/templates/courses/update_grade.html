@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Update Grade</title>
+  </head>
+  <body>
+    <h1>Update Grade for {{ enrollment.student.username }} in {{ enrollment.course.code }}</h1>
+
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Save</button>
+    </form>
+
+    <p>
+      <a href="{% url 'courses:results' enrollment.course.pk %}">Back to results</a>
+    </p>
+  </body>
+</html>

@@ -1,9 +1,12 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic import ListView,DetailView
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from accounts.decorators import role_required
 from django.http import HttpResponseForbidden
+
+from accounts.models import CMSUser
+from courses.forms import GradeUpdateForm
 from .models import Course, Enrollment
 
 class CourseListView(ListView):
@@ -63,3 +66,26 @@ def course_results(request, pk):
         return render(request, 'courses/results.html',{'course':course,'enrollments':enrollments})
     else:
         return HttpResponseForbidden("Unauthorized")
+    
+
+def is_teacher_or_admin(user:CMSUser):
+    return user.is_authenticated and user.role in ("teacher", "admin")
+
+@login_required
+@user_passes_test(is_teacher_or_admin)
+def update_grade(request, course_pk, enrollment_pk):
+    enrollment= get_object_or_404(Enrollment, pk=enrollment_pk, course_id=course_pk)
+    
+    if request.user.role == "teacher":
+        if not enrollment.course.teacher or enrollment.course.teacher != request.user:
+            return HttpResponseForbidden("You are not the teacher of this course")
+    if request.method == "POST":
+        form = GradeUpdateForm(request.POST, instance=enrollment)
+        if form.is_valid():
+            form.save()
+            return redirect("courses:results", pk=course_pk)
+    else:
+        form = GradeUpdateForm(instance=enrollment)
+        
+    return render(request, "courses/update_grade.html", {"form": form, "enrollment": enrollment})
+    

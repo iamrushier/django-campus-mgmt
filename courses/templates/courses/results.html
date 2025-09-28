@@ -1,22 +1,42 @@
 <!-- templates/courses/results.html -->
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head><title>Results — {{ course.name }}</title></head>
-<body>
-  <nav><a href="{% url 'courses:course_detail' course.pk %}">Back</a></nav>
-  <h1>Results for {{ course.code }} — {{ course.name }}</h1>
+  <head>
+    <title>Results - {{ course.name }}</title>
+  </head>
+  <body>
+    <nav>
+      <a href="{% url 'courses:course_detail' course.pk %}">Back</a>
+    </nav>
+    <h1>Results for {{ course.code }} — {{ course.name }}</h1>
 
-  {% if enrollment %}
-    <p>Your grade: {{ enrollment.grade|default:"Not released yet" }}</p>
-  {% elif enrollments %}
-    <table>
-      <tr><th>Student</th><th>Enrolled on</th><th>Grade</th></tr>
-      {% for en in enrollments %}
-        <tr><td>{{ en.student.username }}</td><td>{{ en.enrolled_on }}</td><td>{{ en.grade|default:"-" }}</td></tr>
-      {% endfor %}
-    </table>
-  {% else %}
-    <p>No results to show.</p>
-  {% endif %}
-</body>
+    {% if enrollment %}
+      <p>Your grade: {{ enrollment.grade|default:'Not released yet' }}</p>
+    {% elif enrollments %}
+      <table border="1" cellpadding="6">
+        <tr>
+          <th>Student</th>
+          <th>Enrolled on</th>
+          <th>Grade</th>
+          {% if user.role == 'teacher' or user.role == 'admin' %}
+            <th>Actions</th>
+          {% endif %}
+        </tr>
+        {% for en in enrollments %}
+          <tr>
+            <td>{{ en.student.username }}</td>
+            <td>{{ en.enrolled_on }}</td>
+            <td>{{ en.grade|default:'-' }}</td>
+            {% if user.role == 'teacher' or user.role == 'admin' %}
+              <td>
+                <a href="{% url 'courses:update_grade' course.pk en.pk %}">Update grade</a>
+              </td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+      </table>
+    {% else %}
+      <p>No results to show.</p>
+    {% endif %}
+  </body>
 </html>
