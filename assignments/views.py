@@ -7,7 +7,7 @@ from django.utils import timezone
 from accounts.decorators import role_required
 from .models import Assignment, Submission
 from courses.models import Course
-from .forms import AssignmentForm, SubmissionForm
+from .forms import AssignmentForm, SubmissionForm, SubmissionGradeForm
 
 @login_required
 def course_assignments(request, course_pk):
@@ -168,3 +168,21 @@ def submit_assignment(request, assignment_pk):
         "submission": submission,
         "already_submitted": already_submitted
     })
+
+@login_required
+@role_required(["teacher", "admin"])
+def grade_submission(request, submission_pk):
+    submission = get_object_or_404(Submission, pk=submission_pk)
+    assignment = submission.assignment
+    if request.user.role == "teacher" and assignment.course.teacher != request.user:
+        return HttpResponseForbidden("You cannot grade this submission.")
+    if request.method == "POST":
+        form = SubmissionGradeForm(request.POST, instance=submission)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Submission by {submission.student.username} graded successfully.")
+            return redirect("assignments:assignment_submissions", assignment_pk=assignment.pk)
+    else:
+        form = SubmissionGradeForm(instance=submission)
+
+    return render(request, "submissions/grade_submission.html", {"form": form, "submission": submission})

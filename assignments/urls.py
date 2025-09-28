@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import course_assignments,assignment_create,assignment_detail,assignment_edit,assignment_delete
-from .views import assignment_submissions,submit_assignment
+from .views import assignment_submissions,submit_assignment,grade_submission
 app_name = "assignments"
 
 urlpatterns = [
@@ -12,4 +12,5 @@ urlpatterns = [
     
     path("<int:assignment_pk>/submissions/", assignment_submissions, name="assignment_submissions"),
     path("<int:assignment_pk>/submit/", submit_assignment, name="submit_assignment"),
+    path("submission/<int:submission_pk>/grade/", grade_submission, name="grade_submission"),
 ]

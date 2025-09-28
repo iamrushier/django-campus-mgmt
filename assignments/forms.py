@@ -19,3 +19,11 @@ class SubmissionForm(forms.ModelForm):
     class Meta:
         model = Submission
         fields = ["file"]
+
+class SubmissionGradeForm(forms.ModelForm):
+    class Meta:
+        model = Submission
+        fields = ["grade", "feedback"]
+        widgets = {
+            "feedback": forms.Textarea(attrs={"rows": 3}),
+        }
