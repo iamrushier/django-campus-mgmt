@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ assignment.title }}</title>
+  </head>
+  <body>
+    <h1>{{ assignment.title }}</h1>
+    <p>
+      <strong>Course:</strong> {{ assignment.course.name }} ({{ assignment.course.code }})
+    </p>
+    <p>
+      <strong>Description:</strong> {{ assignment.description|linebreaks }}
+    </p>
+    <p>
+      <strong>Due Date:</strong> {{ assignment.due_date|default:'No due date' }}
+    </p>
+    <p>
+      <strong>Created:</strong> {{ assignment.created_at }}
+    </p>
+    <p>
+      <strong>Teacher:</strong> {{ assignment.teacher.username }}
+    </p>
+
+    {% if user.is_authenticated and user.role == 'admin' or user == assignment.course.teacher %}
+      Edit | Delete
+      <!-- Enable later -->
+      {% comment %} <p>
+        <a href="{% url 'assignments:assignment_edit' assignment.pk %}">Edit</a> |
+        <a href="{% url 'assignments:assignment_delete' assignment.pk %}">Delete</a>
+      </p> {% endcomment %}
+    {% endif %}
+
+    <p>
+      <a href="{% url 'assignments:course_assignments' assignment.course.pk %}">Back to assignments</a>
+    </p>
+  </body>
+</html>

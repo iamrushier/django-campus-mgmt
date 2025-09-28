@@ -46,3 +46,20 @@ def assignment_create(request, course_pk):
     else:
         form = AssignmentForm()
     return render(request, "assignments/assignment_form.html", {"form": form, "course": course})
+
+
+@login_required
+def assignment_detail(request, pk):
+    assignment = get_object_or_404(Assignment, pk=pk)
+    
+    if request.user.role == "student":
+        if not request.user.enrollments.filter(course=assignment.course).exists():
+            return HttpResponseForbidden("You are not enrolled in this course.")
+    elif request.user.role == "teacher":
+        if assignment.course.teacher != request.user:
+            return HttpResponseForbidden("You are not the teacher of this course.")
+    return render(
+        request,
+        "assignments/assignment_detail.html",
+        {"assignment": assignment},
+    )

@@ -8,8 +8,11 @@
 
     <ul>
       {% for a in assignments %}
-        <li>{{ a.title }}
-          (due: {{ a.due_date|default:'No due date' }})</li>
+        <li>
+          <b>{{ a.title }}</b>
+          (due: {{ a.due_date|default:'No due date' }}) |
+          <a href="{% url 'assignments:assignment_detail' a.pk %}">View details</a>
+        </li>
       {% empty %}
         <li>No assignments yet.</li>
       {% endfor %}

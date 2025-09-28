@@ -1,9 +1,10 @@
 from django.urls import path
-from .views import course_assignments,assignment_create
+from .views import course_assignments,assignment_create,assignment_detail
 
 app_name = "assignments"
 
 urlpatterns = [
     path("course/<int:course_pk>/", course_assignments, name="course_assignments"),
     path("course/<int:course_pk>/create/", assignment_create, name="assignment_create"),
+    path("<int:pk>/", assignment_detail, name="assignment_detail"),
 ]
