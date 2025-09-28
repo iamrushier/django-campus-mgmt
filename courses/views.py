@@ -124,3 +124,19 @@ def course_update(request, pk):
         form = CourseForm(instance=course)
 
     return render(request, "courses/course_form.html", {"form": form, "title": f"Edit {course.code}"})
+
+
+@login_required
+@role_required(["teacher", "admin"])
+def course_delete(request, pk):
+    course = get_object_or_404(Course, pk=pk)
+    
+    if request.user.role == "teacher" and course.teacher != request.user:
+        return HttpResponseForbidden("You are not the teacher of this course.")
+
+    if request.method == "POST":
+        course.delete()
+        messages.success(request, f"Course {course.code} deleted successfully.")
+        return redirect("courses:course_list")
+
+    return render(request, "courses/course_confirm_delete.html", {"course": course})

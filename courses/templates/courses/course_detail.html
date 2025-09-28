@@ -39,7 +39,11 @@
         <a href="{% url 'courses:results' course.pk %}">View results</a>
       </p>
       <hr />
-      <a href="{% url 'courses:course_update' course.pk %}">Update</a>
+      <p>
+        <a href="{% url 'courses:course_update' course.pk %}">Update</a>
+        |
+        <a href="{% url 'courses:course_delete' course.pk %}">Delete course</a>
+      </p>
     {% endif %}
   </body>
 </html>
