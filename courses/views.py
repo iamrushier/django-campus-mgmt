@@ -6,7 +6,7 @@ from accounts.decorators import role_required
 from django.http import HttpResponseForbidden
 
 from accounts.models import CMSUser
-from courses.forms import GradeUpdateForm
+from courses.forms import CourseForm, GradeUpdateForm
 from .models import Course, Enrollment
 
 class CourseListView(ListView):
@@ -89,3 +89,38 @@ def update_grade(request, course_pk, enrollment_pk):
         
     return render(request, "courses/update_grade.html", {"form": form, "enrollment": enrollment})
     
+
+@login_required
+@role_required(["teacher", "admin"])
+def course_create(request):
+    if request.method=='POST':
+        form= CourseForm(request.POST)
+        if form.is_valid():
+            course = form.save(commit=False)
+            if request.user.role == 'teacher':
+                course.teacher = request.user
+            course.save()
+            messages.success(request,f"Course {course.code} created successfully")
+            return redirect("courses:course_detail",pk=course.pk)
+    else:
+        form=CourseForm()
+    return render(request, 'courses/course_form.html',{'form':form,'title':"Create Course"})
+
+@login_required
+@role_required(["teacher", "admin"])
+def course_update(request, pk):
+    course = get_object_or_404(Course, pk=pk)
+
+    if request.user.role == "teacher" and course.teacher != request.user:
+        return HttpResponseForbidden("You are not the teacher of this course.")
+
+    if request.method == "POST":
+        form = CourseForm(request.POST, instance=course)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Course {course.code} updated successfully.")
+            return redirect("courses:course_detail", pk=course.pk)
+    else:
+        form = CourseForm(instance=course)
+
+    return render(request, "courses/course_form.html", {"form": form, "title": f"Edit {course.code}"})
