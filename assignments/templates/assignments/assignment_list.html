@@ -1,22 +1,26 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Assignments for {{ course.name }}</title>
-</head>
-<body>
-  <h1>Assignments — {{ course.code }} {{ course.name }}</h1>
+  <head>
+    <title>Assignments for {{ course.name }}</title>
+  </head>
+  <body>
+    <h1>Assignments — {{ course.code }} {{ course.name }}</h1>
 
-  <ul>
-    {% for a in assignments %}
-      <li>
-        {{ a.title }}
-        (due: {{ a.due_date|default:"No due date" }})
-      </li>
-    {% empty %}
-      <li>No assignments yet.</li>
-    {% endfor %}
-  </ul>
-
-  <p><a href="{% url 'courses:course_detail' course.pk %}">Back to course</a></p>
-</body>
+    <ul>
+      {% for a in assignments %}
+        <li>{{ a.title }}
+          (due: {{ a.due_date|default:'No due date' }})</li>
+      {% empty %}
+        <li>No assignments yet.</li>
+      {% endfor %}
+    </ul>
+    {% if user.is_authenticated and user.role == 'admin' or user == course.teacher %}
+      <p>
+        <a href="{% url 'assignments:assignment_create' course.pk %}">+ Add New Assignment</a>
+      </p>
+    {% endif %}
+    <p>
+      <a href="{% url 'courses:course_detail' course.pk %}">Back to course</a>
+    </p>
+  </body>
 </html>

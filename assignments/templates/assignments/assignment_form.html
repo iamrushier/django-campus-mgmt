@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>New Assignment — {{ course.name }}</title>
+  </head>
+  <body>
+    <h1>Add Assignment for {{ course.code }} — {{ course.name }}</h1>
+
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Create Assignment</button>
+    </form>
+
+    <p>
+      <a href="{% url 'assignments:course_assignments' course.pk %}">Back to Assignments</a>
+    </p>
+  </body>
+</html>
