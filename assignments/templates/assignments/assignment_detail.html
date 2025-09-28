@@ -23,11 +23,14 @@
 
     {% if user.is_authenticated and user.role == 'admin' or user == assignment.course.teacher %}
       <p>
+        <a href="{% url 'assignments:assignment_submissions' assignment.pk %}">View Submissions</a>
+      </p>
+      <p>
         <a href="{% url 'assignments:assignment_edit' assignment.pk %}">Edit</a> |
         <a href="{% url 'assignments:assignment_delete' assignment.pk %}">Delete</a>
       </p>
     {% endif %}
-
+    <hr />
     <p>
       <a href="{% url 'assignments:course_assignments' assignment.course.pk %}">Back to assignments</a>
     </p>

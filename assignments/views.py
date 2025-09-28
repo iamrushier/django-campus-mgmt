@@ -106,3 +106,20 @@ def assignment_delete(request, pk):
         "assignments/assignment_confirm_delete.html",
         {"assignment": assignment},
     )
+
+
+############## Submission Related Views ################
+
+@login_required
+@role_required(["teacher", "admin"])
+def assignment_submissions(request, assignment_pk):
+    assignment = get_object_or_404(Assignment, pk=assignment_pk)
+    if request.user.role == "teacher" and assignment.course.teacher != request.user:
+        return HttpResponseForbidden("You cannot view submissions for this assignment.")
+    
+    submissions = assignment.submissions.select_related("student")
+    return render(
+        request,
+        "submissions/submission_list.html",
+        {"assignment": assignment, "submissions": submissions},
+    )
