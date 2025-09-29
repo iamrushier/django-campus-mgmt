@@ -26,8 +26,8 @@ urlpatterns = [
     path("courses/",include("courses.urls")),
     path("assignments/",include("assignments.urls")),
     path("accounts/",include("django.contrib.auth.urls")),
+    path('api/',include("apis.urls")),
     path("",TemplateView.as_view(template_name="home.html"),name="home"),
-    path('api/',include("apis.urls"))
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
