@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from accounts.decorators import role_required
 from django.http import HttpResponseForbidden
+from django.core import mail
 
 from accounts.models import CMSUser
 from courses.forms import CourseForm, GradeUpdateForm
@@ -39,6 +40,13 @@ def enroll_in_course(request, pk):
     enrollment, created = Enrollment.objects.get_or_create(student=request.user, course=course)
     if created:
         messages.success(request,f"You are now enrolled in {course.name}")
+        mail.send_mail(
+            "Enrollment success",
+            f"You have successfully enrolled in course {course.name}\n"+
+            f"Here are the enrollment details: {str(enrollment)}",
+            'from@example.com',
+            [enrollment.student.email,]
+        )
     else:
         messages.info(request,f"You are already enrolled in this course")
     return redirect('courses:course_detail',pk=pk)
@@ -83,6 +91,13 @@ def update_grade(request, course_pk, enrollment_pk):
         form = GradeUpdateForm(request.POST, instance=enrollment)
         if form.is_valid():
             form.save()
+            mail.send_mail(
+            "Grading updates",
+            f"Your progress has been graded for course {enrollment.course.name}\n"+
+            f"You got grade: {str(enrollment.grade)}\nKeep it up!",
+            'from@example.com',
+            [enrollment.student.email,]
+        )
             return redirect("courses:results", pk=course_pk)
     else:
         form = GradeUpdateForm(instance=enrollment)

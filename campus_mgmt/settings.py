@@ -133,3 +133,5 @@ AUTH_USER_MODEL = 'accounts.CMSUser'
 BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'uploads'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
