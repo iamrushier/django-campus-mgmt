@@ -1,42 +1,53 @@
-<!-- templates/courses/results.html -->
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Results - {{ course.name }}</title>
-  </head>
-  <body>
-    <nav>
-      <a href="{% url 'courses:course_detail' course.pk %}">Back</a>
-    </nav>
-    <h1>Results for {{ course.code }} — {{ course.name }}</h1>
+{% extends 'base.html' %}
 
-    {% if enrollment %}
-      <p>Your grade: {{ enrollment.grade|default:'Not released yet' }}</p>
-    {% elif enrollments %}
-      <table border="1" cellpadding="6">
-        <tr>
-          <th>Student</th>
-          <th>Enrolled on</th>
-          <th>Grade</th>
+{% block title %}Results - {{ course.name }} - Campus Management System{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <a href="{% url 'courses:course_detail' course.pk %}" class="btn btn-secondary">&larr; Back to Course</a>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h1 class="card-title">Results for {{ course.code }} — {{ course.name }}</h1>
+  </div>
+
+  {% if enrollment %}
+  <div class="py-4">
+    <p style="font-size: 1.25rem;">Your grade: <strong>{{ enrollment.grade|default:'Not released yet' }}</strong></p>
+  </div>
+  {% elif enrollments %}
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="border-bottom: 2px solid var(--border-color); text-align: left;">
+          <th style="padding: 1rem;">Student</th>
+          <th style="padding: 1rem;">Enrolled On</th>
+          <th style="padding: 1rem;">Grade</th>
           {% if user.role == 'teacher' or user.role == 'admin' %}
-            <th>Actions</th>
+          <th style="padding: 1rem;">Actions</th>
           {% endif %}
         </tr>
+      </thead>
+      <tbody>
         {% for en in enrollments %}
-          <tr>
-            <td>{{ en.student.username }}</td>
-            <td>{{ en.enrolled_on }}</td>
-            <td>{{ en.grade|default:'-' }}</td>
-            {% if user.role == 'teacher' or user.role == 'admin' %}
-              <td>
-                <a href="{% url 'courses:update_grade' course.pk en.pk %}">Update grade</a>
-              </td>
-            {% endif %}
-          </tr>
+        <tr style="border-bottom: 1px solid var(--border-color);">
+          <td style="padding: 1rem;">{{ en.student.username }}</td>
+          <td style="padding: 1rem;">{{ en.enrolled_on }}</td>
+          <td style="padding: 1rem;">{{ en.grade|default:'-' }}</td>
+          {% if user.role == 'teacher' or user.role == 'admin' %}
+          <td style="padding: 1rem;">
+            <a href="{% url 'courses:update_grade' course.pk en.pk %}" class="btn btn-secondary"
+              style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Update grade</a>
+          </td>
+          {% endif %}
+        </tr>
         {% endfor %}
-      </table>
-    {% else %}
-      <p>No results to show.</p>
-    {% endif %}
-  </body>
-</html>
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="text-center py-4">No results to show.</p>
+  {% endif %}
+</div>
+{% endblock %}

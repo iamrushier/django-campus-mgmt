@@ -1,30 +1,49 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Grade Submission — {{ submission.student.username }}</title>
-  </head>
-  <body>
-    <h1>Grade Submission</h1>
-    <p>
-      <strong>Assignment:</strong> {{ submission.assignment.title }}<br />
-      <strong>Student:</strong> {{ submission.student.username }}<br />
-      <strong>Submitted At:</strong> {{ submission.submitted_at }}<br />
-      <strong>File:</strong>
-      {% if submission.file %}
-        <a href="{{ submission.file.url }}" target="_blank">Download</a>
-      {% else %}
-        -
-      {% endif %}
-    </p>
+{% extends 'base.html' %}
+
+{% block title %}Grade Submission - Campus Management System{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin: 2rem auto;">
+  <div class="card">
+    <div class="card-header">
+      <h1 class="card-title">Grade Submission</h1>
+      <p class="text-light mt-1">
+        {{ submission.assignment.title }} — {{ submission.student.username }}
+      </p>
+    </div>
+
+    <div class="mb-4 p-4" style="background-color: var(--background-color); border-radius: var(--radius);">
+      <p><strong>Submitted At:</strong> {{ submission.submitted_at }}</p>
+      <p>
+        <strong>File:</strong>
+        {% if submission.file %}
+        <a href="{{ submission.file.url }}" target="_blank" class="btn btn-secondary"
+          style="padding: 0.25rem 0.75rem; font-size: 0.875rem; margin-left: 0.5rem;">Download File</a>
+        {% else %}
+        <span class="text-light">No file attached</span>
+        {% endif %}
+      </p>
+    </div>
 
     <form method="post">
       {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit">Save Grade</button>
+      {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+        <div class="text-danger" style="color: var(--danger-color); font-size: 0.875rem; margin-top: 0.25rem;">
+          {{ field.errors.0 }}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+      <div class="flex gap-4 mt-4">
+        <button type="submit" class="btn btn-primary">Save Grade</button>
+        <a href="{% url 'assignments:assignment_submissions' submission.assignment.pk %}"
+          class="btn btn-secondary">Cancel</a>
+      </div>
     </form>
-
-    <p>
-      <a href="{% url 'assignments:assignment_submissions' submission.assignment.pk %}">Back to submissions</a>
-    </p>
-  </body>
-</html>
+  </div>
+</div>
+{% endblock %}

@@ -1,54 +1,63 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Submissions — {{ assignment.title }}</title>
-  </head>
-  <body>
-    <h1>Submissions for {{ assignment.title }}</h1>
-    <p>
-      <strong>Course:</strong> {{ assignment.course.name }} ({{ assignment.course.code }})<br />
-      <strong>Due Date:</strong> {{ assignment.due_date|default:'No due date' }}
-    </p>
+{% extends 'base.html' %}
 
-    <table border="1" cellpadding="6">
-      <tr>
-        <th>Student</th>
-        <th>Submitted At</th>
-        <th>File</th>
-        <th>Grade</th>
-        <th>Feedback</th>
-        <th>Actions</th>
-      </tr>
-      {% for s in submissions %}
-        <tr>
-          <td>{{ s.student.username }}</td>
-          <td>{{ s.submitted_at }}</td>
-          <td>
+{% block title %}Submissions - {{ assignment.title }} - Campus Management System{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <a href="{% url 'assignments:assignment_detail' assignment.pk %}" class="btn btn-secondary">&larr; Back to
+    Assignment</a>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h1 class="card-title">Submissions for {{ assignment.title }}</h1>
+    <p class="text-light mt-1">
+      {{ assignment.course.code }} — {{ assignment.course.name }}<br>
+      Due: {{ assignment.due_date|default:'No due date' }}
+    </p>
+  </div>
+
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="border-bottom: 2px solid var(--border-color); text-align: left;">
+          <th style="padding: 1rem;">Student</th>
+          <th style="padding: 1rem;">Submitted At</th>
+          <th style="padding: 1rem;">File</th>
+          <th style="padding: 1rem;">Grade</th>
+          <th style="padding: 1rem;">Feedback</th>
+          <th style="padding: 1rem;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in submissions %}
+        <tr style="border-bottom: 1px solid var(--border-color);">
+          <td style="padding: 1rem;">{{ s.student.username }}</td>
+          <td style="padding: 1rem;">{{ s.submitted_at }}</td>
+          <td style="padding: 1rem;">
             {% if s.file %}
-              <a href="{{ s.file.url }}" target="_blank">Download</a>
+            <a href="{{ s.file.url }}" target="_blank" class="btn btn-secondary"
+              style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Download</a>
             {% else %}
-              -
+            -
             {% endif %}
           </td>
-          <td>{{ s.grade|default:'-' }}</td>
-          <td>{{ s.feedback|default:'-' }}</td>
-          <td>
-            {% if s.grade %}
-              <a href="{% url 'assignments:grade_submission' s.pk %}">Update</a>
-            {% else %}
-              <a href="{% url 'assignments:grade_submission' s.pk %}">Grade</a>
-            {% endif %}
+          <td style="padding: 1rem;">{{ s.grade|default:'-' }}</td>
+          <td style="padding: 1rem;">{{ s.feedback|default:'-' }}</td>
+          <td style="padding: 1rem;">
+            <a href="{% url 'assignments:grade_submission' s.pk %}" class="btn btn-primary"
+              style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">
+              {% if s.grade %}Update{% else %}Grade{% endif %}
+            </a>
           </td>
         </tr>
-      {% empty %}
+        {% empty %}
         <tr>
-          <td colspan="5">No submissions yet.</td>
+          <td colspan="6" class="text-center py-4">No submissions yet.</td>
         </tr>
-      {% endfor %}
+        {% endfor %}
+      </tbody>
     </table>
-
-    <p>
-      <a href="{% url 'assignments:assignment_detail' assignment.pk %}">Back to assignment</a>
-    </p>
-  </body>
-</html>
+  </div>
+</div>
+{% endblock %}

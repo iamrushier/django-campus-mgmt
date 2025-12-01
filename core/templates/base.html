@@ -1,10 +1,56 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>{% block title %}Campus Management System{% endblock %}</title>
-  </head>
-  <body>
-    <main>{% block content %} {% endblock %}</main>
-  </body>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Campus Management System{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="container navbar-content">
+      <a href="/" class="navbar-brand">CampusManager</a>
+      <ul class="navbar-nav">
+        <li><a href="/" class="nav-link">Home</a></li>
+        {% if user.is_authenticated %}
+        <li><a href="{% url 'courses:course_list' %}" class="nav-link">Courses</a></li>
+        <li>
+          <form action="{% url 'logout' %}" method="POST" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="nav-link"
+              style="background: none; border: none; padding: 0; font: inherit; cursor: pointer;">Logout</button>
+          </form>
+        </li>
+        {% else %}
+        <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+        <li><a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+      {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; {% now "Y" %} Campus Management System. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+
 </html>

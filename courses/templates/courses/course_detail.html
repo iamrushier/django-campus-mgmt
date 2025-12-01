@@ -1,55 +1,67 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>{{ course.name }}</title>
-  </head>
-  <body>
-    <nav>
-      <a href="{% url 'courses:course_list' %}">Back to courses</a>
-    </nav>
-    <h1>Course Details</h1>
-    <h3>{{ course.code }} — {{ course.name }}</h3>
-    <p>{{ course.description }}</p>
+{% extends 'base.html' %}
+
+{% block title %}{{ course.name }} - Campus Management System{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <a href="{% url 'courses:course_list' %}" class="btn btn-secondary">&larr; Back to Courses</a>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h1 class="card-title">{{ course.code }} — {{ course.name }}</h1>
+  </div>
+
+  <div class="mb-4">
+    <p class="mb-4">{{ course.description }}</p>
     <p>
-      Teacher:{% if course.teacher %}
-        {{ course.teacher.username }}
+      <strong>Teacher:</strong>
+      {% if course.teacher %}
+      {{ course.teacher.username }}
       {% else %}
-        Not assigned
+      <span class="text-light">Not assigned</span>
       {% endif %}
     </p>
+  </div>
 
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+    <!-- Student Actions -->
     {% if user.is_authenticated and user.role == 'student' %}
+    <div class="card" style="background-color: var(--background-color); border: none;">
+      <h3>Student Actions</h3>
       {% if enrollment %}
-        <p>
-          You are enrolled. <a href="{% url 'courses:results' course.pk %}">View results</a>
-        </p>
-        <p>
-          <a href="{% url 'assignments:course_assignments' course.pk %}">View Assignments</a>
-        </p>
+      <div class="alert alert-success">
+        You are enrolled in this course.
+      </div>
+      <div class="flex flex-col gap-2">
+        <a href="{% url 'courses:results' course.pk %}" class="btn btn-secondary">View Results</a>
+        <a href="{% url 'assignments:course_assignments' course.pk %}" class="btn btn-primary">View Assignments</a>
+      </div>
       {% else %}
-        <form action="{% url 'courses:enroll' course.pk %}" method="post">
-          {% csrf_token %}
-          <button type="submit">Enroll</button>
-        </form>
+      <form action="{% url 'courses:enroll' course.pk %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Enroll in Course</button>
+      </form>
       {% endif %}
+    </div>
     {% endif %}
 
+    <!-- Teacher/Admin Actions -->
     {% if user.is_authenticated and user.role == 'teacher' or user.role == 'admin' %}
-      <p>
-        <a href="{% url 'courses:enrolled_students' course.pk %}">View enrolled students</a>
-      </p>
-      <p>
-        <a href="{% url 'courses:results' course.pk %}">View results</a>
-      </p>
-      <p>
-        <a href="{% url 'assignments:course_assignments' course.pk %}">View Assignments</a>
-      </p>
-      <hr />
-      <p>
-        <a href="{% url 'courses:course_update' course.pk %}">Update</a>
-        |
-        <a href="{% url 'courses:course_delete' course.pk %}">Delete course</a>
-      </p>
+    <div class="card" style="background-color: var(--background-color); border: none;">
+      <h3>Management</h3>
+      <div class="flex flex-col gap-2">
+        <a href="{% url 'courses:enrolled_students' course.pk %}" class="btn btn-secondary">View Enrolled Students</a>
+        <a href="{% url 'courses:results' course.pk %}" class="btn btn-secondary">View Results</a>
+        <a href="{% url 'assignments:course_assignments' course.pk %}" class="btn btn-secondary">View Assignments</a>
+        <hr style="border-top: 1px solid var(--border-color); margin: 1rem 0;">
+        <div class="flex gap-2">
+          <a href="{% url 'courses:course_update' course.pk %}" class="btn btn-secondary">Edit Course</a>
+          <a href="{% url 'courses:course_delete' course.pk %}" class="btn btn-danger">Delete Course</a>
+        </div>
+      </div>
+    </div>
     {% endif %}
-  </body>
-</html>
+  </div>
+</div>
+{% endblock %}

@@ -1,39 +1,53 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Submit: {{ assignment.title }}</title>
-  </head>
-  <body>
-    <h1>Submit Assignment</h1>
-    <h3>{{ assignment.title }} ({{ assignment.course.code }})</h3>
+{% extends 'base.html' %}
 
-    <p>
-      <strong>Description:</strong> {{ assignment.description|linebreaks }}
-    </p>
-    <p>
-      <strong>Due Date:</strong> {{ assignment.due_date|default:'No due date' }}
-    </p>
+{% block title %}Submit: {{ assignment.title }} - Campus Management System{% endblock %}
 
-    {% if already_submitted %}
-      <p>You have already submitted this assignment.</p>
-      <p>
-        File: <a href="{{ submission.file.url }}">{{ submission.file.name }}</a><br />
-        Submitted at: {{ submission.submitted_at }}<br />
-        {% if submission.grade %}
-          Grade: {{ submission.grade }}<br />
-          Feedback: {{ submission.feedback|default:'-' }}
-        {% endif %}
-      </p>
-    {% else %}
-      <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit Assignment</button>
-      </form>
+{% block content %}
+<div class="mb-4">
+  <a href="{% url 'assignments:assignment_detail' assignment.pk %}" class="btn btn-secondary">&larr; Back to
+    Assignment</a>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h1 class="card-title">Submit Assignment</h1>
+    <p class="text-light mt-1">{{ assignment.title }} ({{ assignment.course.code }})</p>
+  </div>
+
+  <div class="mb-4">
+    <p class="mb-2"><strong>Description:</strong> {{ assignment.description|linebreaks }}</p>
+    <p><strong>Due Date:</strong> {{ assignment.due_date|default:'No due date' }}</p>
+  </div>
+
+  {% if already_submitted %}
+  <div class="alert alert-success">
+    You have already submitted this assignment.
+  </div>
+  <div class="card" style="background-color: var(--background-color); border: none;">
+    <p><strong>File:</strong> <a href="{{ submission.file.url }}">{{ submission.file.name }}</a></p>
+    <p><strong>Submitted at:</strong> {{ submission.submitted_at }}</p>
+    {% if submission.grade %}
+    <hr style="border-top: 1px solid var(--border-color); margin: 1rem 0;">
+    <p><strong>Grade:</strong> {{ submission.grade }}</p>
+    <p><strong>Feedback:</strong> {{ submission.feedback|default:'No feedback provided.' }}</p>
     {% endif %}
-
-    <p>
-      <a href="{% url 'assignments:assignment_detail' assignment.pk %}">Back to Assignment Details</a>
-    </p>
-  </body>
-</html>
+  </div>
+  {% else %}
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group">
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}
+      <div class="text-danger" style="color: var(--danger-color); font-size: 0.875rem; margin-top: 0.25rem;">
+        {{ field.errors.0 }}
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Submit Assignment</button>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

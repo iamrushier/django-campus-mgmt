@@ -1,19 +1,33 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Update Grade</title>
-  </head>
-  <body>
-    <h1>Update Grade for {{ enrollment.student.username }} in {{ enrollment.course.code }}</h1>
+{% extends 'base.html' %}
+
+{% block title %}Update Grade - Campus Management System{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 500px; margin: 2rem auto;">
+  <div class="card">
+    <div class="card-header">
+      <h1 class="card-title">Update Grade</h1>
+      <p class="text-light mt-1">For {{ enrollment.student.username }} in {{ enrollment.course.code }}</p>
+    </div>
 
     <form method="post">
       {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit">Save</button>
+      {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+        <div class="text-danger" style="color: var(--danger-color); font-size: 0.875rem; margin-top: 0.25rem;">
+          {{ field.errors.0 }}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+      <div class="flex gap-4 mt-4">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'courses:results' enrollment.course.pk %}" class="btn btn-secondary">Cancel</a>
+      </div>
     </form>
-
-    <p>
-      <a href="{% url 'courses:results' enrollment.course.pk %}">Back to results</a>
-    </p>
-  </body>
-</html>
+  </div>
+</div>
+{% endblock %}

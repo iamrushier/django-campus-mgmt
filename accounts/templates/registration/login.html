@@ -1,9 +1,30 @@
-{% extends "base.html" %} 
-{% block title %}Login{% endblock %} 
+{% extends "base.html" %}
+{% block title %}Login - Campus Management System{% endblock %}
+
 {% block content %}
-<h2>Log In</h2>
-<form method="post">
-  {% csrf_token %} {{ form }}
-  <button type="submit">Log In</button>
-</form>
+<div class="container" style="max-width: 400px; margin: 2rem auto;">
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title text-center">Log In</h2>
+    </div>
+    <form method="post">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+        <div class="text-danger" style="color: var(--danger-color); font-size: 0.875rem; margin-top: 0.25rem;">
+          {{ field.errors.0 }}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-primary" style="width: 100%;">Log In</button>
+    </form>
+    <div class="text-center mt-4">
+      <p>Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+    </div>
+  </div>
+</div>
 {% endblock %}

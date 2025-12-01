@@ -1,41 +1,46 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>
-      {% if is_edit %}
-        Edit
-      {% else %}
-        Create
-      {% endif %}Assignment
-    </title>
-  </head>
-  <body>
-    <h1></h1>
-    <h1>
-      {% if is_edit %}
-        Edit
-      {% else %}
-        Add
-      {% endif %}Assignment for {{ course.code }} — {{ course.name }}
-    </h1>
+{% extends 'base.html' %}
+
+{% block title %}
+{% if is_edit %}Edit{% else %}Add{% endif %} Assignment - Campus Management System
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin: 2rem auto;">
+  <div class="card">
+    <div class="card-header">
+      <h1 class="card-title">
+        {% if is_edit %}Edit{% else %}Add{% endif %} Assignment
+      </h1>
+      <p class="text-light mt-1">For {{ course.code }} — {{ course.name }}</p>
+    </div>
+
     <form method="post">
       {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit">
-        {% if is_edit %}
-          Update
-        {% else %}
-          Create
+      {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+        <small style="display: block; color: var(--text-light); margin-top: 0.25rem;">{{ field.help_text }}</small>
         {% endif %}
-      </button>
+        {% if field.errors %}
+        <div class="text-danger" style="color: var(--danger-color); font-size: 0.875rem; margin-top: 0.25rem;">
+          {{ field.errors.0 }}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+      <div class="flex gap-4 mt-4">
+        <button type="submit" class="btn btn-primary">
+          {% if is_edit %}Update{% else %}Create{% endif %}
+        </button>
+        {% if is_edit %}
+        <a href="{% url 'assignments:assignment_detail' assignment.pk %}" class="btn btn-secondary">Cancel</a>
+        {% else %}
+        <a href="{% url 'assignments:course_assignments' course.pk %}" class="btn btn-secondary">Cancel</a>
+        {% endif %}
+      </div>
     </form>
-
-    <p>
-      {% if is_edit %}
-        <a href="{% url 'assignments:assignment_detail' assignment.pk %}">Back to assignment</a>
-      {% else %}
-        <a href="{% url 'assignments:course_assignments' course.pk %}">Back to Assignments</a>
-      {% endif %}
-    </p>
-  </body>
-</html>
+  </div>
+</div>
+{% endblock %}

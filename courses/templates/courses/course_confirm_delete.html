@@ -1,18 +1,23 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Delete Course</title>
-  </head>
-  <body>
-    <h1>Delete Course</h1>
-    <p>
-      Are you sure you want to delete <strong>{{ course.code }} — {{ course.name }}</strong>?
+{% extends 'base.html' %}
+
+{% block title %}Delete Course - Campus Management System{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 500px; margin: 2rem auto;">
+  <div class="card">
+    <div class="card-header">
+      <h1 class="card-title text-danger" style="color: var(--danger-color);">Delete Course</h1>
+    </div>
+    <p class="mb-4">
+      Are you sure you want to delete <strong>{{ course.code }} — {{ course.name }}</strong>? This action cannot be
+      undone.
     </p>
 
-    <form method="post">
+    <form method="post" class="flex gap-4">
       {% csrf_token %}
-      <button type="submit">Yes, delete</button>
-      <a href="{% url 'courses:course_detail' course.pk %}">Cancel</a>
+      <button type="submit" class="btn btn-danger">Yes, delete</button>
+      <a href="{% url 'courses:course_detail' course.pk %}" class="btn btn-secondary">Cancel</a>
     </form>
-  </body>
-</html>
+  </div>
+</div>
+{% endblock %}

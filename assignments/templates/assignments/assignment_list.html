@@ -1,29 +1,36 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Assignments for {{ course.name }}</title>
-  </head>
-  <body>
-    <h1>Assignments — {{ course.code }} {{ course.name }}</h1>
+{% extends 'base.html' %}
 
-    <ul>
-      {% for a in assignments %}
-        <li>
-          <b>{{ a.title }}</b>
-          (due: {{ a.due_date|default:'No due date' }}) |
-          <a href="{% url 'assignments:assignment_detail' a.pk %}">View details</a>
-        </li>
-      {% empty %}
-        <li>No assignments yet.</li>
-      {% endfor %}
-    </ul>
+{% block title %}Assignments - {{ course.name }} - Campus Management System{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <a href="{% url 'courses:course_detail' course.pk %}" class="btn btn-secondary">&larr; Back to Course</a>
+</div>
+
+<div class="card">
+  <div class="card-header flex justify-between items-center">
+    <h1 class="card-title">Assignments — {{ course.code }}</h1>
     {% if user.is_authenticated and user.role == 'admin' or user == course.teacher %}
-      <p>
-        <a href="{% url 'assignments:assignment_create' course.pk %}">+ Add New Assignment</a>
-      </p>
+    <a href="{% url 'assignments:assignment_create' course.pk %}" class="btn btn-primary">+ Add New Assignment</a>
     {% endif %}
-    <p>
-      <a href="{% url 'courses:course_detail' course.pk %}">Back to course</a>
-    </p>
-  </body>
-</html>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4">
+    {% for a in assignments %}
+    <div class="card" style="background-color: var(--background-color); border: none; margin-bottom: 0;">
+      <div class="flex justify-between items-center">
+        <div>
+          <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem;">{{ a.title }}</h3>
+          <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 0;">
+            Due: {{ a.due_date|default:'No due date' }}
+          </p>
+        </div>
+        <a href="{% url 'assignments:assignment_detail' a.pk %}" class="btn btn-secondary">View Details</a>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-center py-4">No assignments yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

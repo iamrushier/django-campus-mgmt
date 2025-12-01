@@ -1,18 +1,23 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Delete Assignment</title>
-  </head>
-  <body>
-    <h1>Delete Assignment</h1>
-    <p>
-      Are you sure you want to delete the assignment <strong>{{ assignment.title }}</strong>?
+{% extends 'base.html' %}
+
+{% block title %}Delete Assignment - Campus Management System{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 500px; margin: 2rem auto;">
+  <div class="card">
+    <div class="card-header">
+      <h1 class="card-title text-danger" style="color: var(--danger-color);">Delete Assignment</h1>
+    </div>
+    <p class="mb-4">
+      Are you sure you want to delete the assignment <strong>{{ assignment.title }}</strong>? This action cannot be
+      undone.
     </p>
 
-    <form method="post">
+    <form method="post" class="flex gap-4">
       {% csrf_token %}
-      <button type="submit">Yes, delete</button>
-      <a href="{% url 'assignments:assignment_detail' assignment.pk %}">Cancel</a>
+      <button type="submit" class="btn btn-danger">Yes, delete</button>
+      <a href="{% url 'assignments:assignment_detail' assignment.pk %}" class="btn btn-secondary">Cancel</a>
     </form>
-  </body>
-</html>
+  </div>
+</div>
+{% endblock %}
